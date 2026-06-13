@@ -173,7 +173,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="hb-icon"><svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:var(--ic);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
           <div><div style="font-size:13px;font-weight:800;color:var(--dp)">Galeria da viagem</div><div style="font-size:10px;color:var(--mu);margin-top:1px">Fotos de toda a malta · partilha também no WhatsApp</div></div>
         </div>
-        <div style="font-size:12px;font-weight:700;color:var(--bl)">Ver tudo →</div>
+        <a href="https://pedrobritoargonauta-ai.github.io/formentera2026" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:var(--bl);text-decoration:none">Ver tudo →</a>
       </div>
       <div style="display:flex;gap:8px">
         <div style="flex:1;aspect-ratio:1;border-radius:12px;background:rgba(79,138,91,.08);border:1.5px dashed var(--br);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
@@ -191,8 +191,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div id="s-galeria" class="screen">
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">Galeria</span></div>
   <div style="padding:14px 16px 0">
+    <a href="https://pedrobritoargonauta-ai.github.io/formentera2026" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;background:var(--dp);color:var(--sa);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-decoration:none">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:24px">📸</div>
+        <div>
+          <div style="font-size:14px;font-weight:800">Abrir Galeria Completa</div>
+          <div style="font-size:11px;opacity:.7;margin-top:2px">Vê e partilha fotos com toda a malta</div>
+        </div>
+      </div>
+      <div style="font-size:20px;opacity:.7">→</div>
+    </a>
     <div style="background:rgba(74,144,164,.08);border:1px solid rgba(74,144,164,.2);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--bl);line-height:1.6">
-      📸 As fotos ficam aqui visíveis para toda a gente em tempo real. Partilha também no WhatsApp!
+      💡 A galeria funciona na app completa. Clica no botão acima para ver e partilhar fotos com toda a malta!
     </div>
     <div style="background:#fff;border:1.5px solid var(--br);border-radius:16px;padding:15px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:800;color:var(--dp);margin-bottom:12px">📤 Partilhar fotografia</div>
@@ -651,16 +661,4 @@ function formiReply(q){
   if(/obrigad|valeu/.test(n))return 'De nada! 🌊 Aproveita Formentera!';
   return '🤔 Tenta perguntar sobre:\n📅 Agenda · 🏖️ Praias · 🛵 Motas\n⛴️ Transfers · 👙 Dress code · 🏆 Games\n👤 Nome de alguém do grupo';
 }
-function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElementById('chat-msgs');box.innerHTML+=`<div class="msg user">${msg.replace(/</g,'&lt;')}</div>`;const tid='t'+Date.now();box.innerHTML+=`<div class="msg bot" id="${tid}" style="opacity:.55">A pensar… 🌊</div>`;box.scrollTop=box.scrollHeight;setTimeout(()=>{const el=document.getElementById(tid);if(el)el.outerHTML=`<div class="msg bot">${formiReply(msg).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;box.scrollTop=box.scrollHeight;},350);}
-function askFormi(btn){document.getElementById('chat-in').value=btn.textContent;sendFormi();}
-
-// ── INIT ──
-function init(){
-  loadPts();
-  renderRank();renderTeams('');[24,25,26].forEach(d=>renderChals(d));
-  loadGallery();
-}
-init();
-</script>
-</body>
-</html>
+function sendFormi(){const inp=document.getEl
