@@ -4,26 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Formentera 2026</title>
-<script type="module">
-import{initializeApp}from'https://esm.sh/firebase@10.12.0/app';
-import{getFirestore,collection,doc,setDoc,getDoc,getDocs,orderBy,query}from'https://esm.sh/firebase@10.12.0/firestore';
-const cfg={apiKey:"AIzaSyAHAVL0Kbp6XW0wSyGotJ2sVgN_mRkNlhU",authDomain:"formentera26-e8a7b.firebaseapp.com",projectId:"formentera26-e8a7b",storageBucket:"formentera26-e8a7b.firebasestorage.app",messagingSenderId:"1017729351151",appId:"1:1017729351151:web:f9f20ae46b289086628a1a"};
-const app=initializeApp(cfg);const db=getFirestore(app);
-window._fbSavePhoto=async e=>await setDoc(doc(collection(db,'photos'),e.id),e);
-window._fbLoadPhotos=async()=>{const q=query(collection(db,'photos'),orderBy('ts','desc'));const s=await getDocs(q);return s.docs.map(d=>d.data());};
-window._cloudinaryUpload=async(dataUrl)=>{
-  const blob=await(await fetch(dataUrl)).blob();
-  const fd=new FormData();fd.append('file',blob);fd.append('upload_preset','formentera2026');fd.append('folder','formentera26');
-  const r=await fetch('https://api.cloudinary.com/v1_1/dxy2biacx/image/upload',{method:'POST',body:fd});
-  const d=await r.json();if(!d.secure_url)throw new Error('Cloudinary upload failed');
-  return d.secure_url;
-};
-window._fbSavePts=async pts=>await setDoc(doc(db,'meta','ranking'),{pts,updated:Date.now()});
-window._fbLoadPts=async()=>{const s=await getDoc(doc(db,'meta','ranking'));return s.exists()?s.data().pts:null;};
-window._fbSaveMeta=async(key,val)=>await setDoc(doc(db,'meta',key),val);
-window._fbLoadMeta=async(key)=>{const s=await getDoc(doc(db,'meta',key));return s.exists()?s.data():null;};
-window._fbReady=true;console.log('Firebase ✓');
-</script>
 <style>
 :root{--dp:#1B4D3E;--gr:#4F8A5B;--sa:#F5E6C8;--wh:#F8F7F3;--bl:#4A90A4;--tx:#1a2e28;--mu:#5a7a6e;--br:rgba(27,77,62,0.13);--ic:#4F8A5B}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -212,7 +192,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">Galeria</span></div>
   <div style="padding:14px 16px 0">
     <div style="background:rgba(74,144,164,.08);border:1px solid rgba(74,144,164,.2);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--bl);line-height:1.6">
-      📸 As fotos ficam aqui organizadas por categoria e equipa. Partilha também no grupo de WhatsApp para quem não usa a app!
+      📸 As fotos ficam aqui visíveis para toda a gente em tempo real. Partilha também no WhatsApp!
     </div>
     <div style="background:#fff;border:1.5px solid var(--br);border-radius:16px;padding:15px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:800;color:var(--dp);margin-bottom:12px">📤 Partilhar fotografia</div>
@@ -247,7 +227,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div id="gal-status" style="display:none;text-align:center;font-size:12px;padding:8px;border-radius:10px;margin-top:8px"></div>
     </div>
-    <div class="gal-filter-bar">
+    <div class="gal-filter-bar" id="cat-filter-bar">
       <button class="gf on" onclick="setGalFilter(this,'all')">Todas</button>
       <button class="gf off" onclick="setGalFilter(this,'geral')">📷 Geral</button>
       <button class="gf off" onclick="setGalFilter(this,'foto')">📸 Foto</button>
@@ -259,14 +239,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="gal-filter-bar" id="team-filter-bar">
       <button class="gf on" onclick="setTeamFilter(this,'all')">Todas as equipas</button>
-      <button class="gf off" onclick="setTeamFilter(this,'1')" style="border-left:3px solid #c0392b">Illetes</button>
-      <button class="gf off" onclick="setTeamFilter(this,'2')" style="border-left:3px solid #b8860b">Migjorn</button>
-      <button class="gf off" onclick="setTeamFilter(this,'3')" style="border-left:3px solid #27ae60">Saona</button>
-      <button class="gf off" onclick="setTeamFilter(this,'4')" style="border-left:3px solid #2980b9">Llevant</button>
-      <button class="gf off" onclick="setTeamFilter(this,'5')" style="border-left:3px solid #d35400">Es Caló</button>
-      <button class="gf off" onclick="setTeamFilter(this,'6')" style="border-left:3px solid #7b4f9e">Tramuntana</button>
-      <button class="gf off" onclick="setTeamFilter(this,'7')" style="border-left:3px solid #607d8b">Es Pujols</button>
-      <button class="gf off" onclick="setTeamFilter(this,'8')" style="border-left:3px solid #1B4D3E">Trucador</button>
+      <button class="gf off" onclick="setTeamFilter(this,'1')">🔴 Illetes</button>
+      <button class="gf off" onclick="setTeamFilter(this,'2')">🟡 Migjorn</button>
+      <button class="gf off" onclick="setTeamFilter(this,'3')">🟢 Saona</button>
+      <button class="gf off" onclick="setTeamFilter(this,'4')">🔵 Llevant</button>
+      <button class="gf off" onclick="setTeamFilter(this,'5')">🟠 Es Caló</button>
+      <button class="gf off" onclick="setTeamFilter(this,'6')">🟣 Tramuntana</button>
+      <button class="gf off" onclick="setTeamFilter(this,'7')">⚫ Es Pujols</button>
+      <button class="gf off" onclick="setTeamFilter(this,'8')">🏅 Trucador</button>
     </div>
     <div id="gal-loading" style="text-align:center;padding:24px;color:var(--mu);font-size:13px">A carregar galeria…</div>
     <div id="gal-content"></div>
@@ -278,59 +258,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- AGENDA -->
 <div id="s-agenda" class="screen">
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">Agenda</span></div>
-  <div class="ph"><h1>Agenda</h1><p>3 eventos oficiais (24, 25, 26 Jun). O resto é livre. Praias sugeridas são apenas sugestões. ✌️</p></div>
+  <div class="ph"><h1>Agenda</h1><p>3 eventos oficiais (24, 25, 26 Jun). O resto é livre. ✌️</p></div>
   <div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">21 Jun</div><div class="day-lbl">Domingo</div></div><div class="day-vibe">Os pioneiros chegam 🛬</div></div>
-      <div class="ev-item"><div class="ev-t">12h00</div><div class="ev-b"><div class="ev-nm">✈️ Partida do aeroporto</div><div class="ev-ds">Conta decrescente começa aqui!</div></div></div>
-      <div class="ev-item"><div class="ev-t">18h+</div><div class="ev-b"><div class="ev-nm">🛬 Chegadas a Formentera</div><div class="ev-ds">Para quem não consegue esperar.</div></div></div>
-      <div class="ev-item"><div class="ev-t">Ferry</div><div class="ev-b"><div class="ev-nm">⛴️ Ferry Ibiza → Formentera</div><div class="ev-ds">Do aeroporto de Ibiza ao ferry: táxi. Pode comprar-se no próprio dia. ~40 min de travessia.</div><a class="ml" href="https://www.balearia.com" target="_blank" rel="noopener">🎟️ Baleària</a><a class="ml" href="https://maps.google.com/?q=Ferry+Port+Ibiza+Formentera" target="_blank" rel="noopener" style="margin-left:6px">📍 Porto de Ibiza</a></div></div>
+      <div class="ev-item"><div class="ev-t">12h00</div><div class="ev-b"><div class="ev-nm">✈️ Partida do aeroporto</div></div></div>
+      <div class="ev-item"><div class="ev-t">Ferry</div><div class="ev-b"><div class="ev-nm">⛴️ Ferry Ibiza → Formentera</div><div class="ev-ds">~40 min de travessia.</div><a class="ml" href="https://www.balearia.com" target="_blank" rel="noopener">🎟️ Baleària</a></div></div>
       <div class="day-sug">💡 <b>Sugestão:</b> Es Pujols — animada, ideal para o primeiro dia</div>
-      <div class="ev-item"><div class="ev-t">22h00</div><div class="ev-b"><div class="ev-nm">🍽️ Bocasalina</div><div class="ev-ds">Jantar para quem já estiver. Frutos do mar, pés na areia.</div><div class="ev-tgs"><span class="tg tg-b">Por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Bocasalina+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">22h00</div><div class="ev-b"><div class="ev-nm">🍽️ Bocasalina</div><div class="ev-ds">Frutos do mar, pés na areia.</div><div class="ev-tgs"><span class="tg tg-b">Por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Bocasalina+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">22 Jun</div><div class="day-lbl">Segunda-feira</div></div><div class="day-vibe">O grupo ganha forma 🌊</div></div>
       <div class="day-sug">💡 <b>Sugestão:</b> Ses Illetes de manhã (cedo!) ou Cala Saona à tarde</div>
-      <div class="ev-item"><div class="ev-t">16h15</div><div class="ev-b"><div class="ev-nm">🍽️ Duo Caló — Almoço de Grupo</div><div class="ev-ds">Segundo turno. É aqui que a semana começa mesmo.</div><div class="ev-tgs"><span class="tg tg-b">Por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Es+Calo+de+Sant+Agusti+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">16h15</div><div class="ev-b"><div class="ev-nm">🍽️ Duo Caló — Almoço de Grupo</div><div class="ev-tgs"><span class="tg tg-b">Por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Es+Calo+de+Sant+Agusti+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">23 Jun</div><div class="day-lbl">Terça-feira</div></div><div class="day-vibe">Praia + Aniversário 🎉</div></div>
-      <div class="day-sug">💡 <b>Sugestão:</b> Bar Amar (Migjorn) ou Cala Saona à tarde</div>
-      <div class="ev-item"><div class="ev-t">22h00</div><div class="ev-b"><div class="ev-nm">🎉 Fandango — Aniversário Maria Lopes Ferreira</div><div class="ev-ds">Para todos os presentes na ilha. Aparecer é obrigatório.</div><a class="ml" href="https://maps.google.com/?q=Fandango+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">22h00</div><div class="ev-b"><div class="ev-nm">🎉 Fandango — Aniversário Maria Lopes Ferreira</div><a class="ml" href="https://maps.google.com/?q=Fandango+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">24 Jun</div><div class="day-lbl">Quarta-feira</div></div><div class="day-vibe">Receção oficial 🥂 · Dia 1 Games</div></div>
-      <div class="ev-item"><div class="ev-t">Atenção</div><div class="ev-b"><div class="ev-nm">⚠️ Chegadas dia 24 — táxis escassos</div><div class="ev-ds">Quem chega neste dia: poucos táxis na ilha, pode haver espera. Planear com antecedência.</div><a class="ml" href="https://www.balearia.com" target="_blank" rel="noopener">🎟️ Baleària</a></div></div>
-      <div class="day-sug">💡 <b>Sugestão:</b> Ses Illetes, Llevant ou Es Caló</div>
-      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🥂 Receção Oficial — Chez Gerdi ★</div><div class="ev-ds">O momento em que toda a gente percebe que isto é muito bom.</div><div class="ev-tgs"><span class="tg tg-g">Sangria incluída</span><span class="tg tg-g">Tapas incluídas</span><span class="tg tg-s">Jantar não incluído</span></div><a class="ml" href="https://maps.google.com/?q=Chez+Gerdi+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="ev-item"><div class="ev-t">Após</div><div class="ev-b"><div class="ev-nm">🍴 Jantar Livre</div><div class="ev-ds">Decide tu. Recomenda-se reservar mesa com antecedência para grupos.</div><div class="ev-tgs"><span class="tg tg-b">Por conta própria</span></div></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">⚠️</div><div class="ev-b"><div class="ev-nm">Chegadas dia 24 — táxis escassos</div><div class="ev-ds">Planear com antecedência.</div></div></div>
+      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🥂 Receção Oficial — Chez Gerdi ★</div><div class="ev-tgs"><span class="tg tg-g">Sangria incluída</span><span class="tg tg-g">Tapas incluídas</span><span class="tg tg-s">Jantar não incluído</span></div><a class="ml" href="https://maps.google.com/?q=Chez+Gerdi+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">25 Jun</div><div class="day-lbl">Quinta-feira</div></div><div class="day-vibe">O almoço do ano 🦞 · Dia 2 Games</div></div>
-      <div class="day-sug">💡 <b>Sugestão:</b> Migjorn de manhã — 5km selvagem</div>
-      <div class="ev-item"><div class="ev-t">15h30</div><div class="ev-b"><div class="ev-nm">🦞 Almoço de Grupo — Beso Beach ★</div><div class="ev-ds">Paella de lavagante ou carne maturada 30 dias. Vinho suficiente para decisões questionáveis. Dress code: estilo! Há paparazzi em todo o lado. 📸</div><div class="ev-tgs"><span class="tg tg-g">Almoço incluído</span><span class="tg tg-g">Vinho incluído</span><span class="tg tg-g">Águas & cerveja</span><span class="tg tg-s">Após: por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Beso+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">15h30</div><div class="ev-b"><div class="ev-nm">🦞 Almoço de Grupo — Beso Beach ★</div><div class="ev-ds">Dress code: estilo! 📸</div><div class="ev-tgs"><span class="tg tg-g">Almoço incluído</span><span class="tg tg-g">Vinho incluído</span><span class="tg tg-g">Águas & cerveja</span></div><a class="ml" href="https://maps.google.com/?q=Beso+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">26 Jun</div><div class="day-lbl">Sexta-feira</div></div><div class="day-vibe">Sunset épico + Festa 🌅 · Dia 3 Games</div></div>
-      <div class="day-sug">💡 <b>Sugestão:</b> Llevant ou Tramuntana de manhã</div>
-      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🌅 Blue Bar — Sunset + Festa ★</div><div class="ev-ds">O sunset mais icónico do Mediterrâneo. Festa até às 04h00.</div><div class="ev-tgs"><span class="tg tg-g">Senhas incluídas</span><span class="tg tg-b">Tapas por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Blue+Bar+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🌅 Blue Bar — Sunset + Festa ★</div><div class="ev-ds">Festa até às 04h00.</div><div class="ev-tgs"><span class="tg tg-g">Senhas incluídas</span><span class="tg tg-b">Tapas por conta própria</span></div><a class="ml" href="https://maps.google.com/?q=Blue+Bar+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">27 Jun</div><div class="day-lbl">Sábado</div></div><div class="day-vibe">O penúltimo. Aproveita. 🍹</div></div>
-      <div class="day-sug">💡 <b>Sugestão:</b> Praia livre — vai onde o coração mandar</div>
-      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🍹 Sunset — Pirata Bar</div><div class="ev-ds">Caipirinhas ao pôr-do-sol. Ou não. A beleza deste dia é precisamente essa incerteza.</div><a class="ml" href="https://maps.google.com/?q=Pirata+Bar+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-      <div class="photo-note">📸 Fotos na galeria da app e no grupo de WhatsApp!</div>
+      <div class="ev-item"><div class="ev-t">Sunset</div><div class="ev-b"><div class="ev-nm">🍹 Sunset — Pirata Bar</div><a class="ml" href="https://maps.google.com/?q=Pirata+Bar+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
     </div>
     <div class="day-wrap">
       <div class="day-hd"><div><div class="day-n">28 Jun</div><div class="day-lbl">Domingo</div></div><div class="day-vibe">Regresso. Infelizmente. ✈️</div></div>
-      <div class="ev-item"><div class="ev-t">Todo o dia</div><div class="ev-b"><div class="ev-nm">✈️ Partidas</div><div class="ev-ds">Alguns mais cedo. O que é claramente um desperdício. Para quem fica até ao fim — bem feito.</div></div></div>
-      <div style="background:#7B4F9E;color:#fff;border-radius:11px;padding:11px 13px;margin-bottom:7px;font-size:12px;font-weight:600;line-height:1.5">🏆 SANTO GRAAL revelado hoje — vencedor e prémio anunciados!</div>
+      <div class="ev-item"><div class="ev-t">Todo o dia</div><div class="ev-b"><div class="ev-nm">✈️ Partidas</div></div></div>
+      <div style="background:#7B4F9E;color:#fff;border-radius:11px;padding:11px 13px;margin-bottom:7px;font-size:12px;font-weight:600;line-height:1.5">🏆 SANTO GRAAL revelado hoje!</div>
     </div>
   </div>
 </div>
@@ -351,9 +317,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="sug" onclick="askFormi(this)">Agenda completa?</button>
       <button class="sug" onclick="askFormi(this)">Melhor praia?</button>
       <button class="sug" onclick="askFormi(this)">O que está incluído?</button>
-      <button class="sug" onclick="askFormi(this)">Como chegar a Formentera?</button>
+      <button class="sug" onclick="askFormi(this)">Como chegar?</button>
       <button class="sug" onclick="askFormi(this)">Vale alugar mota?</button>
-      <button class="sug" onclick="askFormi(this)">App vs WhatsApp?</button>
       <button class="sug" onclick="askFormi(this)">Dress code?</button>
     </div>
     <div class="chat-in-row">
@@ -366,20 +331,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- BEACHES -->
 <div id="s-beaches" class="screen">
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">Praias & Spots</span></div>
-  <div class="ph"><h1>Praias & Spots</h1><p>As praias que dão nome às equipas. ⚠️ UVs muito elevados — protetor solar obrigatório!</p></div>
+  <div class="ph"><h1>Praias & Spots</h1><p>⚠️ UVs muito elevados — protetor solar obrigatório!</p></div>
   <div class="mota-box">
     <div style="font-size:15px;font-weight:800;color:var(--dp);margin-bottom:6px">🛵 Alugar Mota em Es Pujols</div>
-    <div style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:10px">Indispensável. Táxis escassos. Também há carros e buggies. Não é fundamental reservar antes.</div>
-    <a class="mota-lnk" href="https://www.motorentpujols.com/en/moto-rent-formentera-2/?promo=pujols15" target="_blank" rel="noopener"><div><div class="ml-t">🏍️ Motor Rent Pujols</div><div class="ml-s">Es Pujols · Desconto com código pujols15</div></div><span style="opacity:.4;font-size:18px">›</span></a>
-    <a class="mota-lnk" href="https://maps.google.com/?q=alquiler+moto+Es+Pujols+Formentera" target="_blank" rel="noopener"><div><div class="ml-t">🔍 Todas as opções em Es Pujols</div><div class="ml-s">Google Maps · motas, carros e buggies</div></div><span style="opacity:.4;font-size:18px">›</span></a>
+    <div style="font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:10px">Indispensável. Táxis escassos. Também há carros e buggies.</div>
+    <a class="mota-lnk" href="https://www.motorentpujols.com/en/moto-rent-formentera-2/?promo=pujols15" target="_blank" rel="noopener"><div><div class="ml-t">🏍️ Motor Rent Pujols</div><div class="ml-s">Desconto com código pujols15</div></div><span style="opacity:.4;font-size:18px">›</span></a>
   </div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#1E90FF,#40C8E0)"></div><div class="beach-body"><div class="beach-nm">Ses Illetes <span class="beach-team">· Equipa Illetes</span></div><div class="beach-desc">A joia da coroa. Águas turquesa tipo Caraíbas. A mais bonita de Espanha.</div><div class="bstats"><div class="bs"><div class="bs-v">Manhã</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🔴 Alta</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😅 Difícil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Chegar antes das 10h ou de mota. Vale sempre a pena.</div><a class="wlink" href="https://www.windy.com/?37.726,1.405,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Ses+Illetes+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#1E90FF,#40C8E0)"></div><div class="beach-body"><div class="beach-nm">Ses Illetes <span class="beach-team">· Equipa Illetes</span></div><div class="beach-desc">A joia da coroa. Águas turquesa tipo Caraíbas. A mais bonita de Espanha.</div><div class="bstats"><div class="bs"><div class="bs-v">Manhã</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🔴 Alta</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😅 Difícil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Chegar antes das 10h ou de mota.</div><a class="wlink" href="https://www.windy.com/?37.726,1.405,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Ses+Illetes+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
   <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#FF7043,#FFB74D)"></div><div class="beach-body"><div class="beach-nm">Cala Saona <span class="beach-team">· Equipa Saona</span></div><div class="beach-desc">Enseada perfeita entre falésias avermelhadas. Sunset que devia ser ilegal.</div><div class="bstats"><div class="bs"><div class="bs-v">Tarde</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟡 Médio</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😐 Médio</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 O sunset visto daqui é de outro planeta.</div><a class="wlink" href="https://www.windy.com/?38.712,1.374,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Cala+Saona+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#039BE5,#4FC3F7)"></div><div class="beach-body"><div class="beach-nm">Migjorn <span class="beach-team">· Equipa Migjorn</span></div><div class="beach-desc">5km de praia selvagem. Tranquila, sem multidões, sem planos.</div><div class="bstats"><div class="bs"><div class="bs-v">Todo o dia</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Calma</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😊 Fácil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Mota essencial. Beso Beach e Bar Amar ficam aqui.</div><a class="wlink" href="https://www.windy.com/?38.684,1.467,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Migjorn+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#1565C0,#42A5F5)"></div><div class="beach-body"><div class="beach-nm">Es Caló <span class="beach-team">· Equipa Es Caló</span></div><div class="beach-desc">Porto de pescadores com carácter. Barcos tradicionais e o Duo Caló.</div><div class="bstats"><div class="bs"><div class="bs-v">Almoço</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟡 Médio</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😐 Médio</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Entrada para La Mola começa aqui. Almoço dia 22.</div><a class="wlink" href="https://www.windy.com/?38.717,1.508,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Es+Calo+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#00838F,#26C6DA)"></div><div class="beach-body"><div class="beach-nm">Llevant <span class="beach-team">· Equipa Llevant</span></div><div class="beach-desc">O segredo mais bem guardado. Paralela a Ses Illetes mas quase vazia.</div><div class="bstats"><div class="bs"><div class="bs-v">Manhã</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Vazia</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😊 Fácil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Água igual a Ses Illetes, sem a confusão. Conta a poucos.</div><a class="wlink" href="https://www.windy.com/?38.732,1.421,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Llevant+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#FFA726,#FFD54F)"></div><div class="beach-body"><div class="beach-nm">Es Pujols <span class="beach-team">· Equipa Es Pujols</span></div><div class="beach-desc">A mais animada. Base logística — supermercados, farmácias, motas.</div><div class="bstats"><div class="bs"><div class="bs-v">Tarde</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🔴 Animada</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😅 Difícil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Passar no 1º dia para tratar de tudo. ⚠️ UVs elevados!</div><a class="wlink" href="https://www.windy.com/?38.723,1.442,11" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Es+Pujols+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
-  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#37474F,#78909C)"></div><div class="beach-body"><div class="beach-nm">Costa Tramuntana <span class="beach-team">· Equipa Tramuntana</span></div><div class="beach-desc">Costa norte selvagem. Falésias, enseadas escondidas, vistas para Ibiza.</div><div class="bstats"><div class="bs"><div class="bs-v">Pôr-do-sol</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Vazia</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😐 Médio</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Cap de Barbaria: farol + vistas 360°. De mota é uma experiência.</div><a class="wlink" href="https://www.windy.com/?38.645,1.386,11" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Costa+Tramuntana+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#039BE5,#4FC3F7)"></div><div class="beach-body"><div class="beach-nm">Migjorn <span class="beach-team">· Equipa Migjorn</span></div><div class="beach-desc">5km de praia selvagem. Beso Beach e Bar Amar ficam aqui.</div><div class="bstats"><div class="bs"><div class="bs-v">Todo o dia</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Calma</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😊 Fácil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Mota essencial.</div><a class="wlink" href="https://www.windy.com/?38.684,1.467,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Migjorn+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#00838F,#26C6DA)"></div><div class="beach-body"><div class="beach-nm">Llevant <span class="beach-team">· Equipa Llevant</span></div><div class="beach-desc">Paralela a Ses Illetes mas quase vazia. O segredo mais bem guardado.</div><div class="bstats"><div class="bs"><div class="bs-v">Manhã</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Vazia</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😊 Fácil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Água igual a Ses Illetes, sem a confusão.</div><a class="wlink" href="https://www.windy.com/?38.732,1.421,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Llevant+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#1565C0,#42A5F5)"></div><div class="beach-body"><div class="beach-nm">Es Caló <span class="beach-team">· Equipa Es Caló</span></div><div class="beach-desc">Porto de pescadores com carácter. Barcos tradicionais e o Duo Caló.</div><div class="bstats"><div class="bs"><div class="bs-v">Almoço</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟡 Médio</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😐 Médio</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Entrada para La Mola começa aqui.</div><a class="wlink" href="https://www.windy.com/?38.717,1.508,10" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Es+Calo+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#FFA726,#FFD54F)"></div><div class="beach-body"><div class="beach-nm">Es Pujols <span class="beach-team">· Equipa Es Pujols</span></div><div class="beach-desc">A mais animada. Base logística — supermercados, farmácias, motas.</div><div class="bstats"><div class="bs"><div class="bs-v">Tarde</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🔴 Animada</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😅 Difícil</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Passar no 1º dia para tratar de tudo.</div><a class="wlink" href="https://www.windy.com/?38.723,1.442,11" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Es+Pujols+Beach+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
+  <div class="beach-card"><div style="height:5px;background:linear-gradient(90deg,#37474F,#78909C)"></div><div class="beach-body"><div class="beach-nm">Costa Tramuntana <span class="beach-team">· Equipa Tramuntana</span></div><div class="beach-desc">Costa norte selvagem. Falésias, enseadas escondidas, vistas para Ibiza.</div><div class="bstats"><div class="bs"><div class="bs-v">Pôr-do-sol</div><div class="bs-k">Melhor hora</div></div><div class="bs"><div class="bs-v">🟢 Vazia</div><div class="bs-k">Movimento</div></div><div class="bs"><div class="bs-v">😐 Médio</div><div class="bs-k">Parking</div></div></div><div class="insider">💡 Cap de Barbaria: farol + vistas 360°.</div><a class="wlink" href="https://www.windy.com/?38.645,1.386,11" target="_blank" rel="noopener"><div><div class="wlink-t">🌤️ Previsão do tempo</div><div class="wlink-s">Windy</div></div><span style="opacity:.4">›</span></a><a class="ml" href="https://maps.google.com/?q=Costa+Tramuntana+Formentera" target="_blank" rel="noopener">📍 Mapa</a></div></div>
 </div>
 
 <!-- FAQ -->
@@ -387,23 +351,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">FAQ</span></div>
   <div class="ph"><h1>FAQ</h1><p>Tudo o que precisas saber.</p></div>
   <div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Para que serve a app vs WhatsApp?<div class="faq-tog">+</div></div><div class="faq-a">A <b>app</b> é o centro de informação organizado: agenda, praias, games, FAQ, galeria de fotos e o Formi. Ideal para consultar informação antes e durante a viagem.<br><br>O <b>WhatsApp</b> é para tudo o resto: combinações, mensagens, fotos espontâneas e conversa em tempo real.<br><br>As fotos podem estar nos dois sítios — mas mensagens e combinações vão pelo WhatsApp!</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Existe programa obrigatório?<div class="faq-tog">+</div></div><div class="faq-a">Há 3 eventos oficiais: Chez Gerdi (dia 24), Beso Beach (dia 25) e Blue Bar (dia 26). Os outros momentos na agenda são sugestões — just in case. O resto é completamente livre.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">O que está incluído?<div class="faq-tog">+</div></div><div class="faq-a"><b style="color:var(--dp)">24 Jun — Chez Gerdi:</b> Sangria e tapas. Jantar não incluído.<br><br><b style="color:var(--dp)">25 Jun — Beso Beach:</b> Almoço completo + vinho + águas + cerveja. Após: por conta própria.<br><br><b style="color:var(--dp)">26 Jun — Blue Bar:</b> Senhas para bebidas. Tapas por conta.<br><br>Tudo o resto: por conta própria.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Qual é o dress code?<div class="faq-tog">+</div></div><div class="faq-a">A regra geral é fato de banho e bikini. Simples assim.<br><br>Exceção: <b>Beso Beach (dia 25)</b> — espera-se algum estilo. É um beach club premium. Não é obrigatório, mas há paparazzi em todo o lado! 📸👙</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Como chegar a Formentera? (Transfers)<div class="faq-tog">+</div></div><div class="faq-a"><b style="color:var(--dp)">1. Aeroporto de Ibiza → Porto de Ibiza:</b> Táxi (≈15-20 min).<br><br><b style="color:var(--dp)">2. Ferry Ibiza → Formentera:</b> <a href="https://www.balearia.com" target="_blank" rel="noopener">Baleària</a>. Pode comprar no próprio dia. Travessia ~40 min.<br><br><b style="color:var(--dp)">3. Porto de La Savina → Alojamento:</b> Táxi. Atenção: poucos táxis em Formentera! Quem chega dia 24 pode ter maior espera.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Onde alugar mota, carro ou buggy?<div class="faq-tog">+</div></div><div class="faq-a">Recomenda-se mota — a melhor forma de explorar a ilha. Mas há também carros e buggies disponíveis em Es Pujols. Não é necessário reservar antes.<br><br>→ <a href="https://www.motorentpujols.com/en/moto-rent-formentera-2/?promo=pujols15" target="_blank" rel="noopener">Motor Rent Pujols (com desconto — código pujols15)</a></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Nunca andei de mota — é seguro?<div class="faq-tog">+</div></div><div class="faq-a">É relativamente seguro — as estradas são tranquilas. Mas a responsabilidade é individual. Quem vai de mota não bebe. Sem exceções. Há carros e buggies como alternativa.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">As equipas são fixas?<div class="faq-tog">+</div></div><div class="faq-a">Sim, mas não têm de andar juntas! A ideia é incentivar interação entre grupos diferentes. Uma competiçãozinha nunca fez mal a ninguém. 🏆</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Onde partilhar fotografias?<div class="faq-tog">+</div></div><div class="faq-a">Na galeria desta app (organizada por categoria e equipa), no grupo de WhatsApp e nas redes sociais — desde que com autorização das pessoas fotografadas.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Onde estão os organizadores?<div class="faq-tog">+</div></div><div class="faq-a">Pedro Brito e Tânia Brito vão procurar estar um bocadinho com todos ao longo da semana. Não prometemos nada — mas aparecemos!</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Há polícia em Formentera?<div class="faq-tog">+</div></div><div class="faq-a">Sim, claro. Atenção à bebida — sobretudo quem vai de mota. Formentera é uma ilha tranquila mas as regras aplicam-se na mesma.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Há supermercados e farmácias?<div class="faq-tog">+</div></div><div class="faq-a">Sim, em Es Pujols. Farmácia: Farmàcia Es Pujols, Avinguda Miramar. Passar nos primeiros dias. ⚠️ UVs muito elevados — protetor solar SPF50+ é essencial!</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">E compras?<div class="faq-tog">+</div></div><div class="faq-a">Há mercadinhos e lojas muito giras para comprar roupa e presentes. Vale explorar Es Pujols e Sant Francesc Xavier.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Estamos todos perto?<div class="faq-tog">+</div></div><div class="faq-a">Sim! Vamos estar todos na vila de Es Pujols. Somos 64 pessoas. É fácil encontrarmo-nos.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Vamos andar sempre todos juntos?<div class="faq-tog">+</div></div><div class="faq-a">Não — é impossível e não é o objetivo. A sugestão é ir avisando onde estamos (via WhatsApp), se as praias estão boas, e ir juntando grupos espontaneamente.</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Almoços não agendados — devo reservar mesa?<div class="faq-tog">+</div></div><div class="faq-a">Sim! Para grupos grandes, reservar antecipadamente evita surpresas. Mesmo fora de época alta há risco de não ter mesa. Vão marcando!</div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">E se me perder?<div class="faq-tog">+</div></div><div class="faq-a">Formentera tem 20km. É fisicamente impossível. Mas pergunta ao Formi 🌊</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">O que está incluído?<div class="faq-tog">+</div></div><div class="faq-a"><b style="color:var(--dp)">24 Jun — Chez Gerdi:</b> Sangria e tapas. Jantar não incluído.<br><br><b style="color:var(--dp)">25 Jun — Beso Beach:</b> Almoço + vinho + águas + cerveja.<br><br><b style="color:var(--dp)">26 Jun — Blue Bar:</b> Senhas bebidas. Tapas por conta.<br><br>Tudo o resto: por conta própria.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Qual é o dress code?<div class="faq-tog">+</div></div><div class="faq-a">Regra geral: fato de banho e bikini.<br><br>Exceção: <b>Beso Beach (dia 25)</b> — estilo! Beach club premium, há paparazzi! 📸</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Como chegar a Formentera?<div class="faq-tog">+</div></div><div class="faq-a"><b>1.</b> Aeroporto Ibiza → Porto de Ibiza: Táxi (~15-20 min)<br><br><b>2.</b> Ferry: <a href="https://www.balearia.com" target="_blank">Baleària</a> · ~40 min · comprar no dia<br><br><b>3.</b> Porto La Savina → Alojamento: Táxi ⚠️ Poucos táxis!</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Onde alugar mota?<div class="faq-tog">+</div></div><div class="faq-a">Recomenda-se mota. Também há carros e buggies em Es Pujols.<br><br>→ <a href="https://www.motorentpujols.com/en/moto-rent-formentera-2/?promo=pujols15" target="_blank">Motor Rent Pujols (código: pujols15)</a></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Nunca andei de mota — é seguro?<div class="faq-tog">+</div></div><div class="faq-a">Estradas tranquilas. Responsabilidade individual. Quem vai de mota não bebe. Há carros como alternativa.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Há supermercados e farmácias?<div class="faq-tog">+</div></div><div class="faq-a">Sim, em Es Pujols. ⚠️ UVs muito elevados — protetor solar SPF50+!</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Estamos todos perto?<div class="faq-tog">+</div></div><div class="faq-a">Sim! Todos em Es Pujols. ~64 pessoas. Fácil encontrarmo-nos.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="faq(this)">E se me perder?<div class="faq-tog">+</div></div><div class="faq-a">Formentera tem 20km. Fisicamente impossível. Mas pergunta ao Formi 🌊</div></div>
   </div>
 </div>
 
@@ -413,11 +368,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="g-hero">
     <div class="g-title">🏆 FORMENTERA GAMES</div>
     <div class="g-sub">O FOMO é inevitável. Participar é opcional.<br>Ganhar é possível. Embaraçar-se é garantido.</div>
-    <div class="g-how">
-      <b>Como funciona?</b>7 equipas · 3 dias (24, 25, 26 Jun) · Desafios diários + Awards.<br><br>
-      <b>Como se prova?</b>Foto no WhatsApp com hashtag da equipa e/ou na Galeria da app. A organização valida e atualiza pontos no final de cada dia.<br><br>
-      <b>O que marcas aqui fica guardado</b> mesmo que saias e voltes.
-    </div>
+    <div class="g-how"><b>Como funciona?</b>7 equipas · 3 dias (24, 25, 26 Jun) · Desafios diários + Awards.<br><br><b>Como se prova?</b>Foto no WhatsApp com hashtag + na Galeria da app.</div>
   </div>
   <div class="tabs">
     <div class="tab active" onclick="switchTab(this,'tc-rank')">Ranking</div>
@@ -427,16 +378,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="tab" onclick="switchTab(this,'tc-teams')">Equipas</div>
     <div class="tab" onclick="switchTab(this,'tc-awards')">Awards</div>
   </div>
-  <div id="tc-rank" class="tc active"><div class="info-box"><b>🏆 Ranking em tempo real</b>Pontos atribuídos pela organização após verificação no WhatsApp / Galeria.</div><div id="rank-list"></div></div>
-  <div id="tc-day24" class="tc"><div class="info-box"><b>📅 Dia 24 — Chez Gerdi · Dia 1</b>Prova com foto no WhatsApp + hashtag ou na Galeria da app.</div><div id="chal-day24"></div></div>
-  <div id="tc-day25" class="tc"><div class="info-box"><b>📅 Dia 25 — Beso Beach · Dia 2</b>O almoço é incluído — as fotos são obrigatórias! Dress code: estilo 😎</div><div id="chal-day25"></div></div>
-  <div id="tc-day26" class="tc"><div class="info-box"><b>📅 Dia 26 — Blue Bar · Dia 3</b>Último dia. Tudo pode mudar.</div><div id="chal-day26"></div>
-    <div style="background:#12122a;color:#9999ee;border-radius:14px;padding:20px;text-align:center;margin-top:4px;border:1px solid rgba(153,153,238,.22)">
-      <div style="font-size:32px;margin-bottom:9px">🔒</div>
-      <div style="font-size:16px;font-weight:800;letter-spacing:2px">SANTO GRAAL</div>
-      <div style="font-size:12px;opacity:.7;margin-top:9px;line-height:1.6">Revelado a 28 Jun. Vencedor e prémio anunciados no último dia.</div>
-      <div style="display:inline-block;background:rgba(153,153,238,.12);border:1px solid rgba(153,153,238,.28);border-radius:20px;padding:4px 13px;font-size:11px;margin-top:11px;font-weight:700">Revelado a 28 de Junho</div>
-    </div>
+  <div id="tc-rank" class="tc active"><div class="info-box"><b>🏆 Ranking</b>Pontos atribuídos pela organização após verificação.</div><div id="rank-list"></div></div>
+  <div id="tc-day24" class="tc"><div class="info-box"><b>📅 Dia 24 — Chez Gerdi</b></div><div id="chal-day24"></div></div>
+  <div id="tc-day25" class="tc"><div class="info-box"><b>📅 Dia 25 — Beso Beach</b>Dress code: estilo 😎</div><div id="chal-day25"></div></div>
+  <div id="tc-day26" class="tc"><div class="info-box"><b>📅 Dia 26 — Blue Bar</b>Último dia. Tudo pode mudar.</div><div id="chal-day26"></div>
+    <div style="background:#12122a;color:#9999ee;border-radius:14px;padding:20px;text-align:center;margin-top:4px;border:1px solid rgba(153,153,238,.22)"><div style="font-size:32px;margin-bottom:9px">🔒</div><div style="font-size:16px;font-weight:800;letter-spacing:2px">SANTO GRAAL</div><div style="font-size:12px;opacity:.7;margin-top:9px;line-height:1.6">Revelado a 28 Jun.</div></div>
   </div>
   <div id="tc-teams" class="tc">
     <div style="display:flex;gap:8px;margin-bottom:14px">
@@ -448,8 +394,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="info-box" style="margin-top:8px"><b>💬 Hashtags WhatsApp</b><div id="wapp-tags" style="margin-top:8px;line-height:2.5"></div></div>
   </div>
   <div id="tc-awards" class="tc">
-    <div class="info-box"><b>🏅 Formentera Awards</b>Distribuídos pelos 3 dias. No final todos votam.</div>
-    <div style="background:var(--sa);border-radius:13px;padding:15px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mu);margin-bottom:10px">Categorias finais</div><div style="font-size:12px;color:var(--dp);line-height:2.2">🥇 Campeão Geral · 📸 Melhor Foto · 🌅 Melhor Sunset · 😂 Melhor Meme · 🎬 Melhor Recriação · 🌴 Espírito Formentera</div></div>
+    <div class="info-box"><b>🏅 Formentera Awards</b>No final todos votam.</div>
+    <div style="background:var(--sa);border-radius:13px;padding:15px"><div style="font-size:12px;color:var(--dp);line-height:2.2">🥇 Campeão Geral · 📸 Melhor Foto · 🌅 Melhor Sunset · 😂 Melhor Meme · 🎬 Melhor Recriação · 🌴 Espírito Formentera</div></div>
   </div>
 </div>
 
@@ -464,6 +410,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </nav>
 
 <script>
+// ── CLOUDINARY CONFIG ──
+const CL_CLOUD='dxy2biacx';
+const CL_PRESET='formentera2026';
+const CL_TAG='formentera26';
+
 const SCR={home:'s-home',galeria:'s-galeria',agenda:'s-agenda',formi:'s-formi',beaches:'s-beaches',faq:'s-faq',games:'s-games'};
 function go(id){Object.values(SCR).forEach(s=>document.getElementById(s).classList.remove('active'));Object.keys(SCR).forEach(k=>{const b=document.getElementById('nb-'+k);if(b)b.classList.remove('active')});document.getElementById(SCR[id]).classList.add('active');const nb=document.getElementById('nb-'+id);if(nb)nb.classList.add('active');window.scrollTo(0,0);if(id==='galeria')loadGallery();}
 
@@ -472,7 +423,7 @@ tick();setInterval(tick,1000);
 function faq(el){const a=el.nextElementSibling,t=el.querySelector('.faq-tog');a.classList.toggle('open');t.textContent=a.classList.contains('open')?'−':'+';}
 function switchTab(el,id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// ── ADMIN AUTH ──
+// ── ADMIN ──
 let isAdmin=false,_adminHashCache=null;
 async function getAdminHash(){if(_adminHashCache)return _adminHashCache;const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('PB26'));_adminHashCache=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');return _adminHashCache;}
 async function hashStr(s){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
@@ -491,47 +442,32 @@ const TEAMS=[
 ];
 const ALL_MEMBERS=TEAMS.flatMap(t=>t.members.map(n=>({name:n,team:t.name,color:t.color})));
 
-async function savePts(){
-  try{localStorage.setItem('fg26_pts',JSON.stringify(TEAMS.map(t=>({id:t.id,pts:t.pts,leader:t.leader||''}))));}catch(e){}
-  try{if(window._fbReady)await window._fbSavePts(TEAMS.map(t=>({id:t.id,pts:t.pts,leader:t.leader||''})));}catch(e){}
-}
-async function loadPts(){
-  try{if(window._fbReady){const pts=await window._fbLoadPts();if(pts){TEAMS.forEach(t=>{const p=pts.find(x=>x.id===t.id);if(p){t.pts=p.pts||0;t.leader=p.leader||'';}});return;}}}catch(e){}
-  try{const pts=JSON.parse(localStorage.getItem('fg26_pts')||'null');if(pts)TEAMS.forEach(t=>{const p=pts.find(x=>x.id===t.id);if(p){t.pts=p.pts||0;t.leader=p.leader||'';}});}catch(e){}
-}
+function savePts(){try{localStorage.setItem('fg26_pts',JSON.stringify(TEAMS.map(t=>({id:t.id,pts:t.pts,leader:t.leader||''}))));}catch(e){}}
+function loadPts(){try{const pts=JSON.parse(localStorage.getItem('fg26_pts')||'null');if(pts)TEAMS.forEach(t=>{const p=pts.find(x=>x.id===t.id);if(p){t.pts=p.pts||0;t.leader=p.leader||'';}});}catch(e){}}
 
 function renderRank(){
   const s=[...TEAMS].filter(t=>!t.org).sort((a,b)=>b.pts-a.pts),mx=Math.max(...s.map(t=>t.pts),1),md=['🥇','🥈','🥉'];
   document.getElementById('rank-list').innerHTML=s.map((t,i)=>`<div class="rank-item"><div style="font-size:${i<3?17:13}px;font-weight:800;min-width:26px;color:var(--mu)">${md[i]||i+1}</div><div class="tc-col" style="background:${t.color};width:30px;height:30px;font-size:10px">${t.name.slice(0,2).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--dp)">${t.name}${t.leader?` <span style="font-size:10px;color:var(--mu);font-weight:400">· ${t.leader}</span>`:''}</div><div class="rank-bar" style="margin-top:4px"><div class="rank-fill" style="width:${Math.round(t.pts/mx*100)}%;background:${t.color}"></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:17px;font-weight:800;color:var(--dp)">${t.pts}</div><button onclick="editPts(${t.id})" style="font-size:10px;background:var(--sa);border:1px solid var(--br);border-radius:10px;padding:2px 7px;cursor:pointer;margin-top:2px;color:var(--dp);font-weight:600">✏️</button></div></div>`).join('');
 }
 
-function getTeamData(id){try{return JSON.parse(localStorage.getItem('fg26_team_'+id)||'{}');}catch(e){return {};}}
-function saveTeamData(id,d){try{localStorage.setItem('fg26_team_'+id,JSON.stringify(d));}catch(e){}}
-
 function renderTeams(hl=''){
   const q=hl.toLowerCase().trim();
-  const orgTeam=TEAMS.find(t=>t.org);const playTeams=TEAMS.filter(t=>!t.org);
-  document.getElementById('teams-list').innerHTML=[...playTeams,orgTeam].map(t=>{
+  document.getElementById('teams-list').innerHTML=[...TEAMS.filter(t=>!t.org),TEAMS.find(t=>t.org)].map(t=>{
     const membersHTML=t.members.map(m=>{const match=q&&m.toLowerCase().includes(q);const isLeader=t.leader&&m===t.leader;return `<span style="display:inline-block;font-size:12px;color:${match?'var(--dp)':isLeader?t.color:'var(--mu)'};font-weight:${match||isLeader?800:400};${match?'background:rgba(255,220,50,.4);border-radius:5px;padding:1px 5px;margin:1px':''}">${match?'⭐ ':''}${isLeader?'👑 ':''}${m}</span> `;}).join('');
-    const td=getTeamData(t.id);
-    const motto=td.motto?`<div style="font-size:12px;font-style:italic;margin:8px 0 4px;padding:8px 10px;background:rgba(79,138,91,.08);border-left:3px solid var(--gr);border-radius:0 8px 8px 0;color:var(--dp)">"${td.motto}"</div>`:'';
-    const photos=td.photos&&td.photos.length?`<div style="display:flex;gap:6px;margin-top:8px;overflow-x:auto;padding-bottom:4px">${td.photos.map(p=>`<img src="${p}" style="width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0">`).join('')}</div>`:'';
-    const leaderBadge=t.leader?`<div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px">👑 Team Leader: <b>${t.leader}</b></div>`:'';
+    const leaderBadge=t.leader?`<div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px">👑 ${t.leader}</div>`:'';
     return `<div style="background:#fff;border:1.5px solid ${t.color}22;border-radius:16px;margin-bottom:10px;overflow:hidden">
       <div style="background:${t.color};padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleTeam(${t.id})">
         <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">${t.org?'🏅':t.name.slice(0,2).toUpperCase()}</div>
-        <div style="flex:1"><div style="font-size:14px;font-weight:800;color:#fff">${t.org?'Organização — ':''} Equipa ${t.name}</div><div style="font-size:10px;color:rgba(255,255,255,.6)">${t.members.length} membros${t.org?' · Não participa no ranking':' · '+t.pts+' pts'}</div>${leaderBadge}</div>
-        ${!t.org?`<button onclick="event.stopPropagation();editPts(${t.id})" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;color:#fff;font-size:11px;font-weight:700;padding:4px 11px;cursor:pointer;flex-shrink:0">✏️ pts</button>`:''}
-        <div id="arr-${t.id}" style="color:rgba(255,255,255,.7);font-size:18px;transition:transform .2s;margin-left:4px">›</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:800;color:#fff">${t.org?'Organização — ':''}Equipa ${t.name}</div><div style="font-size:10px;color:rgba(255,255,255,.6)">${t.members.length} membros${t.org?' · Não participa':' · '+t.pts+' pts'}</div>${leaderBadge}</div>
+        ${!t.org?`<button onclick="event.stopPropagation();editPts(${t.id})" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;color:#fff;font-size:11px;font-weight:700;padding:4px 11px;cursor:pointer;flex-shrink:0">✏️</button>`:''}
+        <div id="arr-${t.id}" style="color:rgba(255,255,255,.7);font-size:18px;transition:transform .2s">›</div>
       </div>
-      <div id="tb-${t.id}" style="display:none;padding:12px 14px">${motto}<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mu);margin-bottom:8px">Membros</div><div style="line-height:2">${membersHTML}</div>${photos}<div style="margin-top:12px;border-top:1px solid var(--br);padding-top:12px">${t.org?'':'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:7px">Grito / lema</div><div style="display:flex;gap:7px;margin-bottom:10px"><input id="mot-'+t.id+'" placeholder="Escreve o grito da equipa…" value="'+(td.motto||'')+'" style="flex:1;border:1.5px solid var(--br);border-radius:22px;padding:8px 13px;font-size:12px;outline:none;font-family:inherit;background:var(--wh);color:var(--tx)"><button onclick="saveMotto('+t.id+')" style="background:'+t.color+';color:#fff;border:none;border-radius:22px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer">Guardar</button></div>'}<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:7px">Fotos da equipa</div><label style="display:flex;align-items:center;justify-content:center;gap:8px;background:${t.color};color:#fff;border-radius:22px;padding:10px;font-size:12px;font-weight:700;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Fazer upload<input type="file" accept="image/*" style="display:none" onchange="handleTeamPhoto(event,${t.id})"></label></div></div></div>`;
+      <div id="tb-${t.id}" style="display:none;padding:12px 14px"><div style="line-height:2">${membersHTML}</div></div></div>`;
   }).join('');
   document.getElementById('wapp-tags').innerHTML=TEAMS.filter(t=>!t.org).map(t=>`<span style="display:inline-block;background:rgba(27,77,62,.1);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--dp);margin:2px 3px">#${t.name.replace(/[\s']/g,'')}</span>`).join('');
 }
 
 function toggleTeam(id){const b=document.getElementById('tb-'+id),a=document.getElementById('arr-'+id),op=b.style.display==='block';b.style.display=op?'none':'block';if(a)a.style.transform=op?'':'rotate(90deg)';}
-function saveMotto(id){const v=document.getElementById('mot-'+id).value.trim();const d=getTeamData(id);d.motto=v;saveTeamData(id,d);renderTeams(document.getElementById('team-search')?.value||'');setTimeout(()=>{document.getElementById('tb-'+id).style.display='block';document.getElementById('arr-'+id).style.transform='rotate(90deg)';},10);}
-function handleTeamPhoto(e,id){const file=e.target.files[0];if(!file||file.size>3*1024*1024)return;const r=new FileReader();r.onload=ev=>{const d=getTeamData(id);d.photos=d.photos||[];d.photos.unshift(ev.target.result);if(d.photos.length>12)d.photos=d.photos.slice(0,12);saveTeamData(id,d);renderTeams(document.getElementById('team-search')?.value||'');setTimeout(()=>{document.getElementById('tb-'+id).style.display='block';document.getElementById('arr-'+id).style.transform='rotate(90deg)';},10);};r.readAsDataURL(file);}
 function filterTeams(){const q=document.getElementById('team-search').value.trim();const res=document.getElementById('search-result');if(q.length>=2){const m=ALL_MEMBERS.filter(x=>x.name.toLowerCase().includes(q.toLowerCase()));res.style.display='block';res.innerHTML=m.length?m.map(x=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:${x.color};flex-shrink:0"></div><b>${x.name}</b> → <span style="font-weight:700;color:${x.color}">Equipa ${x.team}</span></div>`).join(''):'<span style="color:var(--mu)">Nenhum resultado.</span>';}else res.style.display='none';renderTeams(q);}
 function clearSearch(){document.getElementById('team-search').value='';document.getElementById('search-result').style.display='none';renderTeams('');}
 
@@ -541,85 +477,63 @@ async function editPts(id){
   const modal=document.createElement('div');
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px';
   modal.innerHTML=`<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:320px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-      <div style="width:38px;height:38px;border-radius:50%;background:${t.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${t.name.slice(0,2).toUpperCase()}</div>
-      <div><div style="font-size:15px;font-weight:800;color:var(--dp)">Equipa ${t.name}</div><div style="font-size:12px;color:var(--mu)">Atual: <b>${t.pts} pts</b></div></div>
-    </div>
-    <div style="margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px">👑 Team Leader</div>
-      <select id="leader-sel" style="width:100%;padding:9px 12px;border:1.5px solid var(--br);border-radius:11px;font-size:13px;outline:none;font-family:inherit;background:var(--wh);color:var(--tx)">
-        <option value="">Sem leader definido</option>
-        ${t.members.map(m=>`<option value="${m}" ${t.leader===m?'selected':''}>${m}</option>`).join('')}
-      </select>
-    </div>
-    <div style="margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px">Pontuação total</div>
-      <input id="pts-total" type="number" value="${t.pts}" style="width:100%;padding:10px 14px;border:1.5px solid var(--br);border-radius:11px;font-size:18px;font-weight:700;outline:none;font-family:inherit;color:var(--dp);text-align:center">
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px">Ajuste rápido</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button onclick="document.getElementById('pts-total').value=Math.max(0,parseInt(document.getElementById('pts-total').value||0)-10)" style="flex:1;min-width:50px;padding:9px;background:var(--sa);border:1.5px solid var(--br);border-radius:11px;font-size:13px;font-weight:800;color:var(--dp);cursor:pointer">−10</button>
-        <button onclick="document.getElementById('pts-total').value=Math.max(0,parseInt(document.getElementById('pts-total').value||0)-5)" style="flex:1;min-width:50px;padding:9px;background:var(--sa);border:1.5px solid var(--br);border-radius:11px;font-size:13px;font-weight:800;color:var(--dp);cursor:pointer">−5</button>
-        <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+10" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+10</button>
-        <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+15" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+15</button>
-        <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+20" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+20</button>
-        <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+25" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+25</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button id="pts-cancel" style="flex:1;padding:11px;background:var(--sa);border:none;border-radius:22px;font-size:13px;font-weight:700;color:var(--dp);cursor:pointer">Cancelar</button>
-      <button id="pts-save" style="flex:1;padding:11px;background:${t.color};border:none;border-radius:22px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">Guardar ✓</button>
-    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"><div style="width:38px;height:38px;border-radius:50%;background:${t.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">${t.name.slice(0,2).toUpperCase()}</div><div><div style="font-size:15px;font-weight:800;color:var(--dp)">Equipa ${t.name}</div><div style="font-size:12px;color:var(--mu)">Atual: <b>${t.pts} pts</b></div></div></div>
+    <div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px">👑 Team Leader</div>
+    <select id="leader-sel" style="width:100%;padding:9px 12px;border:1.5px solid var(--br);border-radius:11px;font-size:13px;outline:none;font-family:inherit;background:var(--wh);color:var(--tx)"><option value="">Sem leader</option>${t.members.map(m=>`<option value="${m}" ${t.leader===m?'selected':''}>${m}</option>`).join('')}</select></div>
+    <div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px">Pontuação total</div><input id="pts-total" type="number" value="${t.pts}" style="width:100%;padding:10px 14px;border:1.5px solid var(--br);border-radius:11px;font-size:18px;font-weight:700;outline:none;font-family:inherit;color:var(--dp);text-align:center"></div>
+    <div style="margin-bottom:16px"><div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button onclick="document.getElementById('pts-total').value=Math.max(0,parseInt(document.getElementById('pts-total').value||0)-10)" style="flex:1;min-width:50px;padding:9px;background:var(--sa);border:1.5px solid var(--br);border-radius:11px;font-size:13px;font-weight:800;color:var(--dp);cursor:pointer">−10</button>
+      <button onclick="document.getElementById('pts-total').value=Math.max(0,parseInt(document.getElementById('pts-total').value||0)-5)" style="flex:1;min-width:50px;padding:9px;background:var(--sa);border:1.5px solid var(--br);border-radius:11px;font-size:13px;font-weight:800;color:var(--dp);cursor:pointer">−5</button>
+      <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+10" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+10</button>
+      <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+15" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+15</button>
+      <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+20" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+20</button>
+      <button onclick="document.getElementById('pts-total').value=parseInt(document.getElementById('pts-total').value||0)+25" style="flex:1;min-width:50px;padding:9px;background:rgba(79,138,91,.12);border:1.5px solid rgba(79,138,91,.3);border-radius:11px;font-size:13px;font-weight:800;color:var(--gr);cursor:pointer">+25</button>
+    </div></div>
+    <div style="display:flex;gap:8px"><button id="pts-cancel" style="flex:1;padding:11px;background:var(--sa);border:none;border-radius:22px;font-size:13px;font-weight:700;color:var(--dp);cursor:pointer">Cancelar</button><button id="pts-save" style="flex:1;padding:11px;background:${t.color};border:none;border-radius:22px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">Guardar ✓</button></div>
   </div>`;
   document.body.appendChild(modal);
   document.getElementById('pts-cancel').onclick=()=>modal.remove();
-  document.getElementById('pts-save').onclick=async()=>{
-    const v=parseInt(document.getElementById('pts-total').value);
-    if(isNaN(v)||v<0){alert('Valor inválido.');return;}
-    t.pts=v;t.leader=document.getElementById('leader-sel').value;
-    modal.remove();await savePts();renderRank();renderTeams(document.getElementById('team-search')?.value||'');
-  };
+  document.getElementById('pts-save').onclick=()=>{const v=parseInt(document.getElementById('pts-total').value);if(isNaN(v)||v<0){alert('Valor inválido.');return;}t.pts=v;t.leader=document.getElementById('leader-sel').value;modal.remove();savePts();renderRank();renderTeams(document.getElementById('team-search')?.value||'');};
 }
 
 // ── CHALLENGES ──
 const CHALS={
-  24:[
-    {id:'24a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},
-    {id:'24b',cat:'bingo',txt:'Fotografia de equipa mais criativa do dia',pts:'+15'},
-    {id:'24c',cat:'bingo',txt:'Fotografia com membros de pelo menos 3 equipas diferentes',pts:'+15'},
-    {id:'24d',cat:'award',award:'🌅 Melhor Sunset',txt:'Award: melhor sunset do dia. Publicar no WhatsApp/Galeria com hashtag.',pts:'Voto'},
-  ],
-  25:[
-    {id:'25a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},
-    {id:'25b',cat:'bingo',txt:'Fotografia de equipa mais criativa do dia (dress code: estilo! 😎)',pts:'+15'},
-    {id:'25c',cat:'bingo',txt:'Melhor fotografia com a mascote da equipa',pts:'+20'},
-    {id:'25d',cat:'bingo',txt:'Ver nascer do sol — foto como prova',pts:'+15'},
-    {id:'25e',cat:'award',award:'😂 Melhor Meme',txt:'Award: melhor meme do dia. Publicar no WhatsApp/Galeria com hashtag.',pts:'Voto'},
-    {id:'25f',cat:'award',award:'🎬 Melhor Recriação',txt:'Award: recriar cena famosa (Titanic, Baywatch, White Lotus…)',pts:'Voto'},
-  ],
-  26:[
-    {id:'26a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},
-    {id:'26b',cat:'bingo',txt:'Fotografia de equipa mais criativa do dia',pts:'+15'},
-    {id:'26c',cat:'bingo',txt:'Fotografia com membros de pelo menos 5 equipas diferentes',pts:'+25'},
-    {id:'26d',cat:'bingo',txt:'Fotografia subaquática mais criativa',pts:'+15'},
-    {id:'26e',cat:'award',award:'📸 Melhor Fotografia',txt:'Award: melhor foto de toda a semana. Publicar no WhatsApp/Galeria.',pts:'Voto'},
-  ]
+  24:[{id:'24a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},{id:'24b',cat:'bingo',txt:'Fotografia de equipa mais criativa do dia',pts:'+15'},{id:'24c',cat:'bingo',txt:'Fotografia com membros de pelo menos 3 equipas diferentes',pts:'+15'},{id:'24d',cat:'award',award:'🌅 Melhor Sunset',txt:'Award: melhor sunset do dia.',pts:'Voto'}],
+  25:[{id:'25a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},{id:'25b',cat:'bingo',txt:'Fotografia de equipa mais criativa (dress code: estilo! 😎)',pts:'+15'},{id:'25c',cat:'bingo',txt:'Melhor fotografia com a mascote da equipa',pts:'+20'},{id:'25d',cat:'bingo',txt:'Ver nascer do sol — foto como prova',pts:'+15'},{id:'25e',cat:'award',award:'😂 Melhor Meme',txt:'Award: melhor meme do dia.',pts:'Voto'},{id:'25f',cat:'award',award:'🎬 Melhor Recriação',txt:'Recriar cena famosa (Titanic, Baywatch…)',pts:'Voto'}],
+  26:[{id:'26a',cat:'bingo',txt:'🦁 Mascote da equipa no local mais improvável do dia',pts:'+20'},{id:'26b',cat:'bingo',txt:'Fotografia de equipa mais criativa do dia',pts:'+15'},{id:'26c',cat:'bingo',txt:'Fotografia com membros de pelo menos 5 equipas diferentes',pts:'+25'},{id:'26d',cat:'bingo',txt:'Fotografia subaquática mais criativa',pts:'+15'},{id:'26e',cat:'award',award:'📸 Melhor Fotografia',txt:'Award: melhor foto de toda a semana.',pts:'Voto'}]
 };
 let chalState;try{chalState=JSON.parse(localStorage.getItem('fg26_chal')||'{}');}catch(e){chalState={};}
-function renderChals(day){const el=document.getElementById('chal-day'+day);if(!el)return;el.innerHTML=CHALS[day].map(c=>{const done=!!chalState[c.id];const catCls=c.cat==='bingo'?'cat-bingo':'cat-award';const title=c.award?`<div style="font-size:11px;font-weight:700;color:#8a6500;margin-bottom:3px">${c.award}</div>`:'';return `<div class="chal-item" onclick="toggleChal('${c.id}')"><div class="chal-check ${done?'done':''}">${done?'✓':''}</div><div class="chal-txt ${done?'done':''}">${title}${c.txt}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span class="chal-cat ${catCls}">${c.cat==='bingo'?'Bingo':'Award'}</span><span style="font-size:11px;font-weight:700;color:var(--gr)">${c.pts}</span></div></div>`;}).join('');}
+function renderChals(day){const el=document.getElementById('chal-day'+day);if(!el)return;el.innerHTML=CHALS[day].map(c=>{const done=!!chalState[c.id];return `<div class="chal-item" onclick="toggleChal('${c.id}')"><div class="chal-check ${done?'done':''}">${done?'✓':''}</div><div class="chal-txt ${done?'done':''}">${c.award?`<div style="font-size:11px;font-weight:700;color:#8a6500;margin-bottom:3px">${c.award}</div>`:''} ${c.txt}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0"><span class="chal-cat ${c.cat==='bingo'?'cat-bingo':'cat-award'}">${c.cat==='bingo'?'Bingo':'Award'}</span><span style="font-size:11px;font-weight:700;color:var(--gr)">${c.pts}</span></div></div>`;}).join('');}
 function toggleChal(id){chalState[id]=!chalState[id];try{localStorage.setItem('fg26_chal',JSON.stringify(chalState));}catch(e){}[24,25,26].forEach(d=>renderChals(d));}
 
-// ── GALLERY ──
+// ── GALLERY via Cloudinary ──
 const CAT_LABELS={geral:'📷 Geral',foto:'📸 Melhor Foto',sunset:'🌅 Sunset',meme:'😂 Meme',recriacao:'🎬 Recriação',bingo:'✅ Bingo',espirito:'🌴 Espírito'};
-const T_COLORS={1:'#c0392b',2:'#b8860b',3:'#27ae60',4:'#2980b9',5:'#d35400',6:'#7b4f9e',7:'#607d8b',8:'#1B4D3E'};
-const T_NAMES={1:'Illetes',2:'Migjorn',3:'Saona',4:'Llevant',5:'Es Caló',6:'Tramuntana',7:'Es Pujols',8:'Trucador'};
+const T_COLORS={'1':'#c0392b','2':'#b8860b','3':'#27ae60','4':'#2980b9','5':'#d35400','6':'#7b4f9e','7':'#607d8b','8':'#1B4D3E'};
+const T_NAMES={'1':'Illetes','2':'Migjorn','3':'Saona','4':'Llevant','5':'Es Caló','6':'Tramuntana','7':'Es Pujols','8':'Trucador'};
 let galFilter='all',galTeamFilter='all',galPending=null,allPhotos=[];
 
-function compressImage(dataUrl,maxW,maxH,quality){
-  return new Promise(resolve=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality));};img.src=dataUrl;});
+async function cloudinaryUpload(dataUrl,context){
+  const blob=await(await fetch(dataUrl)).blob();
+  const fd=new FormData();
+  fd.append('file',blob);
+  fd.append('upload_preset',CL_PRESET);
+  fd.append('tags',CL_TAG);
+  if(context)fd.append('context',context); // e.g. "team=1|cat=geral|caption=texto"
+  const r=await fetch(`https://api.cloudinary.com/v1_1/${CL_CLOUD}/image/upload`,{method:'POST',body:fd});
+  const d=await r.json();
+  if(!d.secure_url)throw new Error('Upload failed: '+JSON.stringify(d));
+  return d;
 }
-function handleGalUpload(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=async ev=>{const compressed=await compressImage(ev.target.result,800,800,0.72);galPending=compressed;document.getElementById('gal-preview-img').src=compressed;document.getElementById('gal-preview').style.display='block';};r.readAsDataURL(file);}
+
+async function cloudinaryList(){
+  // Use Cloudinary's resource search by tag - public API for unsigned presets
+  const r=await fetch(`https://res.cloudinary.com/${CL_CLOUD}/image/list/${CL_TAG}.json`);
+  if(!r.ok)throw new Error('List failed');
+  const d=await r.json();
+  return d.resources||[];
+}
+
+function handleGalUpload(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{galPending=ev.target.result;document.getElementById('gal-preview-img').src=ev.target.result;document.getElementById('gal-preview').style.display='block';};r.readAsDataURL(file);}
 function cancelGalPhoto(){galPending=null;document.getElementById('gal-preview').style.display='none';document.getElementById('gal-file').value='';}
 
 async function submitGalPhoto(){
@@ -627,39 +541,59 @@ async function submitGalPhoto(){
   if(!tid){showGalStatus('Seleciona a tua equipa!','#e67e22');return;}
   if(!cat){showGalStatus('Seleciona uma categoria!','#e67e22');return;}
   if(!galPending){showGalStatus('Escolhe uma fotografia!','#e67e22');return;}
-  const btn=document.getElementById('gal-submit-btn');btn.textContent='A fazer upload…';btn.disabled=true;
-  let imgUrl=null;
+  const btn=document.getElementById('gal-submit-btn');btn.textContent='A enviar…';btn.disabled=true;
+  showGalStatus('A enviar para a galeria… ⏳','#4A90A4');
   try{
-    showGalStatus('A enviar imagem… ⏳','#4A90A4');
-    imgUrl=await window._cloudinaryUpload(galPending);
+    const caption=document.getElementById('gal-caption').value.trim();
+    const ctx=`team=${tid}|teamName=${T_NAMES[tid]}|cat=${cat}|caption=${caption}|ts=${Date.now()}`;
+    const result=await cloudinaryUpload(galPending,ctx);
+    const entry={id:result.public_id,img:result.secure_url,teamId:parseInt(tid),teamName:T_NAMES[tid],teamColor:T_COLORS[tid],cat,caption,ts:Date.now()};
+    allPhotos.unshift(entry);
+    showGalStatus('Publicado! 🎉 Toda a gente já pode ver!','#27ae60');
+    cancelGalPhoto();
+    document.getElementById('gal-caption').value='';
+    document.getElementById('gal-team').value='';
+    document.getElementById('gal-cat').value='';
+    renderGallery();updateHomeStrip();
   }catch(e){
-    console.warn('Cloudinary failed, using base64 fallback:',e);
-    imgUrl=galPending;
+    console.error(e);
+    showGalStatus('Erro no upload. Tenta novamente.','#e74c3c');
   }
-  const entry={id:'p_'+Date.now()+'_'+Math.random().toString(36).slice(2),teamId:parseInt(tid),teamName:T_NAMES[tid],teamColor:T_COLORS[tid],cat,caption:document.getElementById('gal-caption').value.trim(),img:imgUrl,ts:Date.now()};
-  let saved=false;
-  try{if(window._fbReady){await window._fbSavePhoto(entry);saved=true;}}catch(e){console.warn('FB save failed:',e);}
-  try{localStorage.setItem('fg26_p_'+entry.id,JSON.stringify(entry));const idx=JSON.parse(localStorage.getItem('fg26_gal_idx')||'[]');idx.unshift(entry.id);localStorage.setItem('fg26_gal_idx',JSON.stringify(idx.slice(0,300)));}catch(e){}
-  allPhotos.unshift(entry);
-  showGalStatus(saved?'Publicado para todos! 🎉 Partilha também no WhatsApp!':'Guardado localmente ✓','#27ae60');
-  cancelGalPhoto();document.getElementById('gal-caption').value='';document.getElementById('gal-team').value='';document.getElementById('gal-cat').value='';
   btn.textContent='Publicar ✓';btn.disabled=false;
-  renderGallery();updateHomeStrip();
 }
-function showGalStatus(msg,col){const el=document.getElementById('gal-status');el.textContent=msg;el.style.cssText=`display:block;color:${col};background:${col}22;border:1px solid ${col}44;text-align:center;font-size:12px;padding:8px;border-radius:10px;margin-top:8px`;setTimeout(()=>el.style.display='none',4000);}
+
+function showGalStatus(msg,col){const el=document.getElementById('gal-status');el.textContent=msg;el.style.cssText=`display:block;color:${col};background:${col}22;border:1px solid ${col}44;text-align:center;font-size:12px;padding:8px;border-radius:10px;margin-top:8px`;setTimeout(()=>el.style.display='none',5000);}
 
 async function loadGallery(){
   const content=document.getElementById('gal-content'),loading=document.getElementById('gal-loading'),empty=document.getElementById('gal-empty');
-  if(loading)loading.style.display='block';if(content)content.style.display='none';if(empty)empty.style.display='none';
-  let photos=[];const seen=new Set();
+  if(loading)loading.style.display='block';
+  if(content){content.innerHTML='';content.style.display='none';}
+  if(empty)empty.style.display='none';
   try{
-    if(!window._fbReady){await new Promise(r=>setTimeout(r,3000));}
-    if(window._fbReady){const fb=await window._fbLoadPhotos();fb.forEach(p=>{if(!seen.has(p.id)){seen.add(p.id);photos.push(p);}});}
-  }catch(e){console.warn('Firestore load failed:',e);}
-  try{const idx=JSON.parse(localStorage.getItem('fg26_gal_idx')||'[]');idx.forEach(id=>{if(seen.has(id))return;try{const p=JSON.parse(localStorage.getItem('fg26_p_'+id));if(p){seen.add(p.id);photos.push(p);}}catch(e){}});}catch(e){}
-  photos.sort((a,b)=>b.ts-a.ts);allPhotos=photos;
+    const resources=await cloudinaryList();
+    allPhotos=resources.map(r=>{
+      // parse context stored during upload
+      const ctx={};
+      if(r.context&&r.context.custom){Object.entries(r.context.custom).forEach(([k,v])=>ctx[k]=v);}
+      const tid=ctx.team||'';
+      return {
+        id:r.public_id,
+        img:r.secure_url||`https://res.cloudinary.com/${CL_CLOUD}/image/upload/${r.public_id}`,
+        teamId:parseInt(tid)||0,
+        teamName:ctx.teamName||T_NAMES[tid]||'',
+        teamColor:T_COLORS[tid]||'#888',
+        cat:ctx.cat||'geral',
+        caption:ctx.caption||'',
+        ts:parseInt(ctx.ts)||new Date(r.created_at).getTime()||0
+      };
+    }).sort((a,b)=>b.ts-a.ts);
+  }catch(e){
+    console.warn('Cloudinary list failed:',e);
+    allPhotos=[];
+  }
   if(loading)loading.style.display='none';
-  renderGallery();updateHomeStrip();
+  renderGallery();
+  updateHomeStrip();
 }
 
 function renderGallery(){
@@ -671,143 +605,60 @@ function renderGallery(){
   empty.style.display='none';content.style.display='block';
   const cats=['geral','foto','sunset','meme','recriacao','bingo','espirito'];
   let html='';
-  cats.forEach(cat=>{const items=filtered.filter(p=>p.cat===cat);if(!items.length)return;html+=`<div class="gal-section"><div class="gal-section-title">${CAT_LABELS[cat]}<span></span></div><div class="gal-grid-${items.length<=4?'2':'3'}">`;items.forEach(p=>{html+=`<div class="gal-thumb" onclick="openLB('${p.id}')"><img src="${p.img}" loading="lazy"><div class="gal-thumb-badge"><span style="background:${p.teamColor||'#888'};border-radius:4px;padding:1px 4px;margin-right:3px;font-size:8px">${p.teamName||''}</span>${p.caption||''}</div></div>`;});html+='</div></div>';});
+  cats.forEach(cat=>{const items=filtered.filter(p=>p.cat===cat);if(!items.length)return;html+=`<div class="gal-section"><div class="gal-section-title">${CAT_LABELS[cat]}<span></span></div><div class="gal-grid-${items.length<=4?'2':'3'}">`;items.forEach(p=>{html+=`<div class="gal-thumb" onclick="openLB('${p.id.replace(/'/g,"\\'")}')"><img src="${p.img}" loading="lazy"><div class="gal-thumb-badge"><span style="background:${p.teamColor};border-radius:4px;padding:1px 4px;margin-right:3px;font-size:8px">${p.teamName}</span>${p.caption}</div></div>`;});html+='</div></div>';});
   content.innerHTML=html||'';
 }
-function setGalFilter(btn,cat){document.querySelectorAll('.gal-filter-bar:first-of-type .gf').forEach(b=>b.className='gf off');btn.className='gf on';galFilter=cat;renderGallery();}
+
+function setGalFilter(btn,cat){document.querySelectorAll('#cat-filter-bar .gf').forEach(b=>b.className='gf off');btn.className='gf on';galFilter=cat;renderGallery();}
 function setTeamFilter(btn,tid){document.querySelectorAll('#team-filter-bar .gf').forEach(b=>b.className='gf off');btn.className='gf on';galTeamFilter=tid;renderGallery();}
-function openLB(id){const p=allPhotos.find(x=>x.id===id);if(!p)return;document.getElementById('lb-img').src=p.img;document.getElementById('lb-info').innerHTML=`<span style="background:${p.teamColor||'#888'};color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-right:6px">${p.teamName}</span><span style="opacity:.8">${CAT_LABELS[p.cat]||''}</span>${p.caption?`<br><span style="opacity:.7;font-size:12px;margin-top:4px;display:block">${p.caption}</span>`:''}`;document.getElementById('lb').style.display='flex';}
+
+function openLB(id){const p=allPhotos.find(x=>x.id===id);if(!p)return;document.getElementById('lb-img').src=p.img;document.getElementById('lb-info').innerHTML=`<span style="background:${p.teamColor};color:#fff;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-right:6px">${p.teamName}</span><span style="opacity:.8">${CAT_LABELS[p.cat]||''}</span>${p.caption?`<br><span style="opacity:.7;font-size:12px;margin-top:4px;display:block">${p.caption}</span>`:''}`;document.getElementById('lb').style.display='flex';}
 function closeLB(){document.getElementById('lb').style.display='none';}
+
 function updateHomeStrip(){
-  const recent=allPhotos.slice(0,2);
-  ['home-p1','home-p2'].forEach((sid,i)=>{const el=document.getElementById(sid);if(!el)return;const p=recent[i];if(p){el.innerHTML=`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;display:block"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:4px 6px 5px;border-radius:0 0 12px 12px"><div style="display:inline-block;background:${p.teamColor||'#888'};color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:4px">${p.teamName||''}</div></div>`;}else{el.innerHTML='';el.style.background='var(--sa)';}});
+  ['home-p1','home-p2'].forEach((sid,i)=>{const el=document.getElementById(sid);if(!el)return;const p=allPhotos[i];if(p){el.innerHTML=`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;display:block"><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:4px 6px 5px;border-radius:0 0 12px 12px"><div style="display:inline-block;background:${p.teamColor};color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:4px">${p.teamName}</div></div>`;}else{el.innerHTML='';el.style.background='var(--sa)';}});
 }
 
-// ── FORMI (Claude-powered) ──
-const FORMI_SYSTEM=`És o Formi 🌊, o concierge pessoal do Formentera Gathering 2026. Respondes sempre em português europeu, de forma simpática, directa e com personalidade — podes usar emojis com moderação.
-
-CONTEXTO COMPLETO DO EVENTO:
-- Evento: Formentera Gathering 2026, 21-28 de Junho de 2026
-- Local: Formentera, Espanha (ilha próxima de Ibiza)
-- Organizadores: Pedro Brito e Tânia Brito
-- Total: ~68 pessoas em 7 equipas competitivas + equipa organização
-
-EQUIPAS:
-🔴 Illetes: Diogo Lobo Carvalho, Maria Lopes Ferreira, Madalena Borges Sousa, Carlota Lagoa, Marina Ventura, Katarzyna Fonseca, Gonçalo Fonseca, Rui Coutinho, Sandra Barros
-🟡 Migjorn: José Amaral, Paula Isidoro, Nuno António, Cristina António, Ricardo António, Sofia Freitas, Nuno Monteiro, Andrea Monteiro
-🟢 Saona: Bruno Mota, Lina Mota, Miguel Pina Martins, Ana Garcia, Bruno Batista, Diana Santos, Rui Hortelão, Sofia Carreiras
-🔵 Llevant: Ana Cristina Ruivo, Vasco Carvalho, Renato Marques, Sofia Gouveia, Miguel Lalanda, Luísa Cid, Pedro Baltazar Silva, Ana Varela Morte, Nelson Soares, Marlene Alves
-🟠 Es Caló: Bruno Geraldes, Diana Malavé, Cristiana Paiva, Pedro Hipólito, Sofia Dias, Marco Gomes, Tânia Costa
-🟣 Tramuntana: Mónica Afonso, André Penin, Carina Oliveira, Pedro Cotrim Pires, Mário Figueirinhas, Nilza Duarte, Raquel Figueirinhas, Bruno Moura
-⚫ Es Pujols: Daniel Traça, Cláudia Conduto, Miguel Ferreira, Vera Pinto, Milton Sousa, Fleur Flohil, Marco Espinheira, Astrid Sauer, Lénia Mestrinho, Tiago Alves, Marta Pimentel, Gonçalo Pimentel
-🏅 Organização (Trucador): Pedro Brito, Tânia Brito
-
-AGENDA:
-21 Jun (Dom): Chegadas. Bocasalina 22h (por conta própria)
-22 Jun (Seg): Duo Caló 16h15 (por conta própria, segundo turno)
-23 Jun (Ter): Fandango 22h — aniversário Maria Lopes Ferreira (obrigatório para quem está na ilha)
-24 Jun (Qua) ★: Chez Gerdi ao sunset (OFICIAL — sangria+tapas incluídos, jantar NÃO). Dia 1 Games. ⚠️ Táxis escassos quem chega dia 24
-25 Jun (Qui) ★: Beso Beach 15h30 (OFICIAL — almoço+vinho+águas+cerveja incluídos). Dia 2 Games. Dress code: estilo!
-26 Jun (Sex) ★: Blue Bar ao sunset (OFICIAL — senhas incluídas, tapas por conta, festa até 04h). Dia 3 Games
-27 Jun (Sáb): Livre. Pirata Bar ao sunset (caipirinhas)
-28 Jun (Dom): Regressos. SANTO GRAAL revelado — vencedor e prémio anunciados
-
-O QUE ESTÁ INCLUÍDO:
-- 24 Jun Chez Gerdi: sangria + tapas. Jantar NÃO incluído
-- 25 Jun Beso Beach: almoço completo + vinho + águas + cerveja. Após: por conta própria
-- 26 Jun Blue Bar: senhas bebidas. Tapas por conta própria
-
-PRAIAS:
-- Ses Illetes: a mais bonita de Espanha, turquesa tipo Caraíbas. Ir cedo (antes 10h) ou de mota. Alta afluência
-- Llevant: paralela a Ses Illetes mas vazia — o segredo melhor guardado
-- Migjorn: 5km selvagem, tranquila. Aqui ficam o Beso Beach e o Bar Amar
-- Cala Saona: enseada entre falésias. Sunset épico
-- Es Caló: porto de pescadores, autêntico. Duo Caló aqui
-- Es Pujols: mais animada, base logística (supermercados, farmácias, motas). UVs elevados!
-- Costa Tramuntana: costa norte rochosa. Cap de Barbaria: farol + vistas 360°
-
-TRANSFERS:
-1. Aeroporto Ibiza → Porto de Ibiza: táxi (~15-20 min)
-2. Ferry Ibiza → Formentera: Baleària (balearia.com), comprar no dia, ~40 min
-3. Porto La Savina → Alojamento: táxi (poucos táxis na ilha!)
-
-MOTAS:
-- Indispensável para explorar a ilha. Também carros e buggies
-- Motor Rent Pujols: código desconto pujols15
-- Não é necessário reservar antes
-- Quem conduz NÃO bebe. Sem exceções
-
-GAMES — Formentera Games:
-- 7 equipas, 3 dias (24, 25, 26 Jun)
-- Desafios Bingo + Awards por dia
-- Provar com foto no WhatsApp com hashtag da equipa ou na Galeria da app
-- Pontos validados pela organização no fim de cada dia
-- Santo Graal revelado dia 28
-
-DRESS CODE: Fato de banho e bikini. Excepção: Beso Beach dia 25 — estilo! (beach club premium, há "paparazzi")
-
-APP vs WHATSAPP: App = informação organizada (agenda, praias, games, galeria, FAQ, Formi). WhatsApp = comunicação em tempo real, combinações, fotos espontâneas
-
-OUTROS:
-- Farmácia: Farmàcia Es Pujols, Avinguda Miramar
-- UVs muito elevados — protetor solar SPF50+ essencial
-- Todos ficam em Es Pujols (~64 pessoas)
-- Playlist Spotify: open.spotify.com/playlist/0YARL4xEp9J1M2VOirXlSI
-- Reservar mesa antecipadamente para grupos é muito recomendado
-
-Responde de forma concisa e útil. Se a pergunta for sobre quem é alguém, indica sempre a equipa. Não inventas informação que não está aqui.`;
-
-let formiHistory=[];
-
-async function callFormi(userMsg){
-  formiHistory.push({role:'user',content:userMsg});
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:1000,
-        system:FORMI_SYSTEM,
-        messages:formiHistory
-      })
-    });
-    const data=await resp.json();
-    const text=data.content?.map(b=>b.text||'').join('')||'Desculpa, não consegui responder agora. Tenta de novo!';
-    formiHistory.push({role:'assistant',content:text});
-    // keep history manageable
-    if(formiHistory.length>20)formiHistory=formiHistory.slice(-20);
-    return text;
-  }catch(e){
-    console.error('Formi API error:',e);
-    return 'Sem ligação ao Formi agora 🌊 Tenta novamente daqui a pouco!';
-  }
+// ── FORMI ──
+const ALL_FK=[
+  {k:['quem vai','participantes','lista','pessoas','quantas'],r:'👥 68 pessoas em 7 equipas:\n🔴 Illetes · 🟡 Migjorn · 🟢 Saona · 🔵 Llevant · 🟠 Es Caló · 🟣 Tramuntana · ⚫ Es Pujols\n\nVai ao separador Equipas nos Games para ver todos!'},
+  {k:['agenda','programa','semana'],r:'📅 Agenda:\n21 Jun — Chegadas · Bocasalina 22h\n22 Jun — Duo Caló 16h15\n23 Jun — Fandango 22h (aniversário Maria)\n24 Jun ★ — Chez Gerdi sunset (sangria+tapas inc.)\n25 Jun ★ — Beso Beach 15h30 (almoço inc.)\n26 Jun ★ — Blue Bar sunset (senhas inc.) + festa 04h\n27 Jun — Livre · Pirata Bar sunset\n28 Jun — Regressos + Santo Graal 🏆'},
+  {k:['incluído','incluido','pago','grátis'],r:'✅ Incluído:\n24 Jun — sangria + tapas (jantar NÃO)\n25 Jun — almoço + vinho + águas + cerveja\n26 Jun — senhas bebidas (tapas NÃO)\n\nTudo o resto: por conta própria.'},
+  {k:['ferry','barco','ibiza','chegar','transfer','aeroporto'],r:'⛴️ Como chegar:\n1. Aeroporto Ibiza → Porto Ibiza: táxi\n2. Ferry Baleària → Formentera: ~40 min\n3. Porto La Savina → Alojamento: táxi\n\n⚠️ Poucos táxis! Quem chega dia 24 pode esperar.'},
+  {k:['mota','moto','carro','buggy','alugar'],r:'🛵 Mota — indispensável!\nMotor Rent Pujols · código: pujols15\nTambém há carros e buggies. Quem conduz NÃO bebe.'},
+  {k:['dress code','roupa','vestir','estilo'],r:'👙 Dress code: fato de banho e bikini.\nExceção: Beso Beach dia 25 — estilo! Beach club premium 😎'},
+  {k:['melhor praia','qual praia'],r:'🏖️ Melhor: Ses Illetes (ir cedo!)\n🤫 Segredo: Llevant · 🌿 Sossego: Migjorn\n🌅 Sunset: Cala Saona · 🎣 Autêntica: Es Caló'},
+  {k:['ses illetes'],r:'🏖️ Ses Illetes — A mais bonita de Espanha. Turquesa tipo Caraíbas. Ir antes das 10h!'},
+  {k:['migjorn','beso','bar amar'],r:'🏖️ Migjorn — 5km selvagem. Beso Beach e Bar Amar ficam aqui. Mota essencial.'},
+  {k:['cala saona','saona'],r:'🏖️ Cala Saona — Sunset épico entre falésias. À tarde!'},
+  {k:['llevant'],r:'🌬️ Llevant — Paralela a Ses Illetes mas vazia. O segredo melhor guardado.'},
+  {k:['sunset','pôr do sol'],r:'🌅 Melhores sunsets:\n1. Blue Bar (dia 26!) · 2. Cap de Barbaria · 3. Cala Saona · 4. Pirata Bar (dia 27!)'},
+  {k:['games','jogo','desafio','ranking','pontos'],r:'🏆 Formentera Games — 3 dias (24, 25, 26 Jun).\nDesafios Bingo + Awards. Prova com foto no WhatsApp + hashtag ou na Galeria.\nSanto Graal revelado dia 28!'},
+  {k:['organizadores','pedro','tânia'],r:'🏅 Pedro Brito e Tânia Brito — vão estar um bocadinho com todos ao longo da semana!'},
+  {k:['farmácia','farmacia','protetor','solar'],r:'💊 Farmàcia Es Pujols — Avinguda Miramar.\n⚠️ UVs muito elevados — SPF50+ obrigatório!'},
+  {k:['spotify','música','playlist'],r:'🎵 Playlist partilhada no Spotify!\nopen.spotify.com/playlist/0YARL4xEp9J1M2VOirXlSI\nAdiciona as tuas músicas!'},
+];
+const ALL_MEMBER_LIST=TEAMS.flatMap(t=>t.members.map(n=>({name:n,team:t.name,color:t.color})));
+function formiReply(q){
+  const n=q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const nm=ALL_MEMBER_LIST.filter(m=>m.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(' ').some(p=>p.length>2&&n.includes(p)));
+  if(nm.length===1)return `👤 ${nm[0].name}\nEquipa: ${nm[0].team}`;
+  if(nm.length>1&&nm.length<=4)return '👥 Encontrei:\n'+nm.map(m=>`• ${m.name} → ${m.team}`).join('\n');
+  let best=null,bestScore=0;
+  for(const e of ALL_FK){let s=0;for(const k of e.k){if(n.includes(k.normalize('NFD').replace(/[\u0300-\u036f]/g,'')))s+=k.length;}if(s>bestScore){bestScore=s;best=e;}}
+  if(best&&bestScore>=3)return best.r;
+  if(/^(ol[aá]|oi|bom dia|boa tarde|hi|hey)\b/.test(n))return 'Olá! 🌊 Pergunta-me sobre agenda, praias, motas, games, transfers, dress code ou qualquer pessoa do grupo!';
+  if(/obrigad|valeu/.test(n))return 'De nada! 🌊 Aproveita Formentera!';
+  return '🤔 Tenta perguntar sobre:\n📅 Agenda · 🏖️ Praias · 🛵 Motas\n⛴️ Transfers · 👙 Dress code · 🏆 Games\n👤 Nome de alguém do grupo';
 }
-
-async function sendFormi(){
-  const inp=document.getElementById('chat-in'),msg=inp.value.trim();
-  if(!msg)return;
-  inp.value='';inp.disabled=true;
-  const box=document.getElementById('chat-msgs');
-  box.innerHTML+=`<div class="msg user">${msg.replace(/</g,'&lt;')}</div>`;
-  const tid='t'+Date.now();
-  box.innerHTML+=`<div class="msg bot" id="${tid}" style="opacity:.55">A pensar… 🌊</div>`;
-  box.scrollTop=box.scrollHeight;
-  const reply=await callFormi(msg);
-  const el=document.getElementById(tid);
-  if(el)el.outerHTML=`<div class="msg bot">${reply.replace(/</g,'&lt;').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;
-  box.scrollTop=box.scrollHeight;
-  inp.disabled=false;inp.focus();
-}
+function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElementById('chat-msgs');box.innerHTML+=`<div class="msg user">${msg.replace(/</g,'&lt;')}</div>`;const tid='t'+Date.now();box.innerHTML+=`<div class="msg bot" id="${tid}" style="opacity:.55">A pensar… 🌊</div>`;box.scrollTop=box.scrollHeight;setTimeout(()=>{const el=document.getElementById(tid);if(el)el.outerHTML=`<div class="msg bot">${formiReply(msg).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;box.scrollTop=box.scrollHeight;},350);}
 function askFormi(btn){document.getElementById('chat-in').value=btn.textContent;sendFormi();}
 
 // ── INIT ──
-async function init(){
-  let w=0;while(!window._fbReady&&w<4000){await new Promise(r=>setTimeout(r,200));w+=200;}
-  await loadPts();
+function init(){
+  loadPts();
   renderRank();renderTeams('');[24,25,26].forEach(d=>renderChals(d));
-  // carregar galeria no arranque para o home strip ficar preenchido
-  await loadGallery();
+  loadGallery();
 }
 init();
 </script>
