@@ -660,4 +660,16 @@ function formiReply(q){
   if(/obrigad|valeu/.test(n))return 'De nada! 🌊 Aproveita Formentera!';
   return '🤔 Tenta perguntar sobre:\n📅 Agenda · 🏖️ Praias · 🛵 Motas\n⛴️ Transfers · 👙 Dress code · 🏆 Games\n👤 Nome de alguém do grupo';
 }
-function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElement
+function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElementById('chat-msgs');box.innerHTML+=`<div class="msg user">${msg.replace(/</g,'&lt;')}</div>`;const tid='t'+Date.now();box.innerHTML+=`<div class="msg bot" id="${tid}" style="opacity:.55">A pensar… 🌊</div>`;box.scrollTop=box.scrollHeight;setTimeout(()=>{const el=document.getElementById(tid);if(el)el.outerHTML=`<div class="msg bot">${formiReply(msg).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;box.scrollTop=box.scrollHeight;},350);}
+function askFormi(btn){document.getElementById('chat-in').value=btn.textContent;sendFormi();}
+
+// ── INIT ──
+function init(){
+  loadPts();
+  renderRank();renderTeams('');[24,25,26].forEach(d=>renderChals(d));
+  loadGallery();
+}
+init();
+</script>
+</body>
+</html>
