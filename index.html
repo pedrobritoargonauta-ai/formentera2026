@@ -182,18 +182,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div id="s-galeria" class="screen">
   <div class="bk"><button onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Home</button><span class="bk-title">Galeria</span></div>
   <div style="padding:14px 16px 0">
-    <a href="https://pedrobritoargonauta-ai.github.io/formentera2026" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;background:var(--dp);color:var(--sa);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-decoration:none">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:24px">📸</div>
-        <div>
-          <div style="font-size:14px;font-weight:800">Abrir Galeria Completa</div>
-          <div style="font-size:11px;opacity:.7;margin-top:2px">Vê e partilha fotos com toda a malta</div>
-        </div>
-      </div>
-      <div style="font-size:20px;opacity:.7">→</div>
-    </a>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <a href="https://pedrobritoargonauta-ai.github.io/formentera2026" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--dp);color:var(--sa);border-radius:14px;padding:14px;text-decoration:none;font-size:13px;font-weight:800">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Ver Galeria
+      </a>
+      <a href="https://pedrobritoargonauta-ai.github.io/formentera2026" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gr);color:#fff;border-radius:14px;padding:14px;text-decoration:none;font-size:13px;font-weight:800">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Fazer Upload
+      </a>
+    </div>
     <div style="background:rgba(74,144,164,.08);border:1px solid rgba(74,144,164,.2);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--bl);line-height:1.6">
-      💡 A galeria funciona na app completa. Clica no botão acima para ver e partilhar fotos com toda a malta!
+      📸 A galeria e o upload funcionam na app completa. Clica nos botões acima!
     </div>
     <div style="background:#fff;border:1.5px solid var(--br);border-radius:16px;padding:15px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:800;color:var(--dp);margin-bottom:12px">📤 Partilhar fotografia</div>
@@ -416,8 +416,16 @@ const CL_CLOUD='dxy2biacx';
 const CL_PRESET='formentera2026';
 const CL_TAG='formentera26';
 
+const GITHUB_URL='https://pedrobritoargonauta-ai.github.io/formentera2026';
 const SCR={home:'s-home',galeria:'s-galeria',agenda:'s-agenda',formi:'s-formi',beaches:'s-beaches',faq:'s-faq',games:'s-games'};
-function go(id){Object.values(SCR).forEach(s=>document.getElementById(s).classList.remove('active'));Object.keys(SCR).forEach(k=>{const b=document.getElementById('nb-'+k);if(b)b.classList.remove('active')});document.getElementById(SCR[id]).classList.add('active');const nb=document.getElementById('nb-'+id);if(nb)nb.classList.add('active');window.scrollTo(0,0);if(id==='galeria')loadGallery();}
+function go(id){
+  if(id==='galeria'){window.open(GITHUB_URL,'_blank');return;}
+  Object.values(SCR).forEach(s=>document.getElementById(s).classList.remove('active'));
+  Object.keys(SCR).forEach(k=>{const b=document.getElementById('nb-'+k);if(b)b.classList.remove('active')});
+  document.getElementById(SCR[id]).classList.add('active');
+  const nb=document.getElementById('nb-'+id);if(nb)nb.classList.add('active');
+  window.scrollTo(0,0);
+}
 
 function tick(){const diff=new Date('2026-06-21T10:00:00Z')-new Date();if(diff<=0){['d','h','m','s'].forEach(k=>document.getElementById('cd-'+k).textContent='0');return;}document.getElementById('cd-d').textContent=Math.floor(diff/86400000);document.getElementById('cd-h').textContent=Math.floor(diff%86400000/3600000);document.getElementById('cd-m').textContent=Math.floor(diff%3600000/60000);document.getElementById('cd-s').textContent=Math.floor(diff%60000/1000);}
 tick();setInterval(tick,1000);
@@ -652,16 +660,4 @@ function formiReply(q){
   if(/obrigad|valeu/.test(n))return 'De nada! 🌊 Aproveita Formentera!';
   return '🤔 Tenta perguntar sobre:\n📅 Agenda · 🏖️ Praias · 🛵 Motas\n⛴️ Transfers · 👙 Dress code · 🏆 Games\n👤 Nome de alguém do grupo';
 }
-function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElementById('chat-msgs');box.innerHTML+=`<div class="msg user">${msg.replace(/</g,'&lt;')}</div>`;const tid='t'+Date.now();box.innerHTML+=`<div class="msg bot" id="${tid}" style="opacity:.55">A pensar… 🌊</div>`;box.scrollTop=box.scrollHeight;setTimeout(()=>{const el=document.getElementById(tid);if(el)el.outerHTML=`<div class="msg bot">${formiReply(msg).replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;box.scrollTop=box.scrollHeight;},350);}
-function askFormi(btn){document.getElementById('chat-in').value=btn.textContent;sendFormi();}
-
-// ── INIT ──
-function init(){
-  loadPts();
-  renderRank();renderTeams('');[24,25,26].forEach(d=>renderChals(d));
-  loadGallery();
-}
-init();
-</script>
-</body>
-</html>
+function sendFormi(){const inp=document.getElementById('chat-in'),msg=inp.value.trim();if(!msg)return;inp.value='';const box=document.getElement
